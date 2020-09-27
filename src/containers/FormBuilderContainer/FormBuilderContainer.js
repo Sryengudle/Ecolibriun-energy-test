@@ -36,7 +36,7 @@ function formBuilderContainer(props) {
                             handleAddRadio={() => props.handleAddRadio(idx)}
                             handleChangeRadio={props.handleChangeRadio}
                             component={component}
-                            radioOption={radioOption}
+                            radioOption={props.formReducer[idx]}
                             idx={idx}
                             handleRemoveComponent={() => props.handleRemoveComponent(idx)}
                         /> : component.selectOption === 'Static' ? <Static
@@ -67,11 +67,11 @@ function formBuilderContainer(props) {
 }
 
 const mapStateToProps = state => {
-    console.log('mapStateToProps', state.formReducer)
     return {
         formDetails: state.formReducer.formDetails,
         componentOptions: state.formReducer.componentOptions,
         radioOption: state.formReducer.radioOption,
+        formReducer: state.formReducer,
     }
 }
 
