@@ -15,7 +15,7 @@ const formReducer = (state = initialState, action) => {
         case ActionType.REMOVE_COMPONENT:
             return {
                 ...state,
-                formDetails: state.formDetails.filter(sidx => action.payload !== sidx)
+                formDetails: state.formDetails.filter((s, sidx) => action.payload !== sidx)
             }
         case ActionType.ADD_RADIO:
             return {
