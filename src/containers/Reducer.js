@@ -20,39 +20,17 @@ const formReducer = (state = initialState, action) => {
         case ActionType.ADD_RADIO:
             return {
                 ...state,
-                radioOption: state.radioOption.concat([{ value: '' }])
-                // formDetails: [{
-                //     ...state.formDetails[action.idx],
-                //     radioOption: state.formDetails[action.idx].radioOption.concat([{ value: '' }])
-                // }]
+                [action.idx]: state && state[action.idx] ? state[action.idx].concat([{ value: '' }]) : [{ value: '' }]
             }
         case ActionType.CHANGE_RADIO:
-            // const nestedState = state.formDetails[action.payload.idx].radioOption[action.payload.index];
-            // nestedState.value = action.payload.value;
-            // // const change_radio = state.formDetails.map((form, sidx) => {
-            // //     if (action.payload.idx !== sidx) return form;
-            // //     return form.radioOption.map((option, index) => {
-            // //         if (action.payload.index == index) {
-            // //             let updatedOption = option.value;
-            // //             updatedOption = action.payload.value;
-            // //             return { ...form, radioOption: [{ value: updatedOption }] }
-            // //         }
-            // //     })
-            // // });
-            const change_radio = state.radioOption.map((option, sidx) => {
+            const change_radio = state[action.payload.idx].map((option, sidx) => {
                 if (action.payload.index !== sidx) return option;
-                return { ...option, value : action.payload.value };
+                return { ...option, value: action.payload.value };
             });
+
             return {
                 ...state,
-                radioOption: change_radio
-                // formDetails: [{
-                //     ...state.formDetails[action.payload.idx],
-                //     radioOption: [{
-                //         ...state.formDetails[action.payload.idx].radioOption[action.payload.index],
-                //         value: action.payload.value
-                //     }]
-                // }]
+                [action.payload.idx]: change_radio
             }
         case ActionType.TEXT:
             let text = action.payload.name;
@@ -70,7 +48,7 @@ const formReducer = (state = initialState, action) => {
             let radio_value = action.payload.value;
             let radio_form_details = state.formDetails.map((form, sidx) => {
                 if (action.payload.idx !== sidx) return form;
-                return { ...form, [radio]: radio_value, question: '', radioOption: [{ value: '' }] };
+                return { ...form, [radio]: radio_value, question: '', [action.payload.idx]: [{ value: '' }] };
             });
             return {
                 ...state,
@@ -101,15 +79,21 @@ const formReducer = (state = initialState, action) => {
                 formDetails: change_form_details
             }
         case ActionType.DOWNLOAD_JSON:
-            var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.formDetails));
-            var a = document.createElement('a');
-            a.href = 'data:' + data;
-            a.download = 'data.json';
+            let radio_data = [];
+            state.formDetails.map((form, index) => {
+                radio_data.push(JSON.stringify(state[index]));
+            })
+            let from_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.formDetails));
+            let a = document.createElement('a');
+            a.href = 'data:' + from_data;
+            a.download = 'from_data.json';
             a.click();
-            return {
-                ...state
-            }
-            break;
+            let radio_form = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(radio_data));
+            let b = document.createElement('a');
+            b.href = 'data:' + radio_form[0];
+            b.download = 'radio_data.json';
+            b.click();
+            return state;
         default:
             return state;
     }
